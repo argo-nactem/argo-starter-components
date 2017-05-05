@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>uk.ac.nactem.argo</groupId>
+	<artifactId>argo-starter-components</artifactId>
+	<version>0.4</version>
+	<packaging>pom</packaging>
+
+	<organization>
+		<name>The National Centre for Text Mining (NaCTeM)</name>
+		<url>http://nactem.ac.uk</url>
+	</organization>
+
+	<properties>
+		<component.id>${project.groupId}.${project.artifactId}</component.id>
+	
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<uima.version>2.9.0</uima.version>
+	</properties>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>desc</directory>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>3.0</version>
+					<configuration>
+						<excludes>
+							<exclude>src/test/resources/**</exclude>
+							<exclude>src/main/resources/**</exclude>
+						</excludes>
+						<mapping>
+							<g4>JAVADOC_STYLE</g4>
+						</mapping>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>format-license-headers</id>
+							<phase>process-sources</phase>
+							<goals>
+								<goal>format</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.jasig.maven</groupId>
+					<artifactId>maven-notice-plugin</artifactId>
+					<version>1.0.6.1</version>
+					<inherited>false</inherited>
+					<configuration>
+						<noticeTemplate>src/license/NOTICE.template</noticeTemplate>
+						<generateChildNotices>false</generateChildNotices>
+					</configuration>
+					<executions>
+						<execution>
+							<id>generate-notice</id>
+							<phase>initialize</phase>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.4</version>
+					<executions>
+						<execution>
+							<id>copy-dependencies</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+							<configuration>
+								<stripVersion>true</stripVersion>
+								<outputDirectory>${project.build.directory}/pearPackaging/lib</outputDirectory>
+								<overWriteReleases>true</overWriteReleases>
+								<overWriteSnapshots>true</overWriteSnapshots>
+								<includeScope>runtime</includeScope>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.uima</groupId>
+					<artifactId>PearPackagingMavenPlugin</artifactId>
+					<version>${uima.version}</version>
+					<extensions>true</extensions>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<configuration>
+								<mainComponentDesc>${component.descriptor}</mainComponentDesc>
+								<componentId>${component.id}</componentId>
+							</configuration>
+							<goals>
+								<goal>package</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+	</build>
+
+	<profiles>
+		<!-- Do we use this anymore? -->
+		<profile>
+			<id>create-license-list</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>1.5</version>
+						<configuration>
+							<useMissingFile>true</useMissingFile>
+						</configuration>
+						<executions>
+							<execution>
+								<id>create-license-list</id>
+								<goals>
+									<goal>aggregate-add-third-party</goal>
+								</goals>
+								<phase>generate-resources</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.uima</groupId>
+			<artifactId>uimaj-core</artifactId>
+			<version>${uima.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+</project>
