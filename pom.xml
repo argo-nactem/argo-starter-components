@@ -162,9 +162,9 @@
 										fail("Missing Maven property 'uima.component.class'");
 										}
 
-										log.info("1");
+										
 										def descriptorPath = uimaClass.replaceAll('\\.','/') + '.xml';
-										log.info("2");
+										
 										def sourceFile = new File(project.build.outputDirectory + '/' + descriptorPath);
 
 										if (!sourceFile.exists()) {
