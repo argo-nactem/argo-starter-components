@@ -1,31 +1,51 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>uk.ac.nactem.argo</groupId>
+
+	<parent>
+		<groupId>uk.ac.nactem.argo</groupId>
+		<artifactId>argo-parent-pom</artifactId>
+		<version>0.5</version>
+	</parent>
+
 	<artifactId>argo-starter-components</artifactId>
 	<version>0.5</version>
 	<packaging>pom</packaging>
+
+	<name>Argo Starter Components</name>
+	<inceptionYear>2017</inceptionYear>
+	<url>https://github.com/argo-nactem/argo-starter-components</url>
+	<description>Parent POM containing sensible defaults for Argo Component development</description>
 
 	<organization>
 		<name>The National Centre for Text Mining (NaCTeM)</name>
 		<url>http://nactem.ac.uk</url>
 	</organization>
+	
+	<developers>
+		<developer>
+			<organization>NaCTeM</organization>
+			<organizationUrl>http://nactem.ac.uk</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/argo-nactem/argo-starter-components</connection>
+		<developerConnection>scm:git:git@github.com:argo-nactem/argo-starter-components.git</developerConnection>
+		<url>https://github.com/argo-nactem/argo-starter-components</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
 		<component.id>${project.groupId}.${project.artifactId}</component.id>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<junit.version>4.12</junit.version>
-
-		<uima.version>2.9.0</uima.version>
-		<uima.fit.version>2.3.0</uima.fit.version>
-		<!-- Temporary measure until https://issues.apache.org/jira/browse/UIMA-3346 
-			is accepted into uimaFIT -->
-		<uima.fit.maven.plugin.version>2.3.0-NACTEM-1</uima.fit.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -40,9 +60,17 @@
 		<plugins>
 			<!-- This plugin will automatically generate the UIMA XML component descriptor -->
 			<plugin>
-				<groupId>org.apache.uima</groupId>
+				<!-- <groupId>org.apache.uima</groupId> -->
 				<artifactId>uimafit-maven-plugin</artifactId>
-				<version>${uima.fit.maven.plugin.version}</version> <!-- change to latest version -->
+
+				<!-- Temporary measure until https://issues.apache.org/jira/browse/UIMA-3346 
+					is accepted into uimaFIT -->
+				 <groupId>uk.ac.nactem.argo</groupId> 
+				<version>2.3.0-NACTEM-1</version> 
+				<!-- <groupId>uk.ac.nactem.argo</groupId> -->
+				<!-- <version>${uima.version}</version> -->
+
+
 				<configuration>
 					<!-- Adds the type systems required by the component -->
 					<typeSystemDescription>BY_NAME</typeSystemDescription>
@@ -159,25 +187,21 @@
 										def uimaClass = project.properties['uima.component.class'];
 
 										if (!uimaClass) {
-										fail("Missing Maven property 'uima.component.class'");
+											fail("Missing Maven property 'uima.component.class'");
 										}
 
-										
 										def descriptorPath = uimaClass.replaceAll('\\.','/') + '.xml';
-										
+
 										def sourceFile = new File(project.build.outputDirectory + '/' + descriptorPath);
 
 										if (!sourceFile.exists()) {
-										fail("Cannot locate UIMA XML descriptor '" + sourceFile.getAbsolutePath()
-										+ "'. Is the Maven property 'uima.component.class' (" 
-										+ uimaClass + ") correct?")
+											fail("Cannot locate UIMA XML descriptor '" + sourceFile.getAbsolutePath() + "'. Is the Maven property 'uima.component.class' (" + uimaClass + ") correct?")
 										}
 
 										def targetFile = new File(project.build.directory + '/pearPackaging/desc/' + descriptorPath);
 
 										targetFile.getParentFile().mkdirs();
-										targetFile &lt;&lt;
-										sourceFile.text;
+										targetFile &lt;&lt; sourceFile.text;
 
 										project.properties['uima.pear.descriptor'] = 'desc/' + descriptorPath;
 									</source>
@@ -243,42 +267,15 @@
 		</profile>
 	</profiles>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-core</artifactId>
-			<version>${uima.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimafit-core</artifactId>
-			<version>${uima.fit.version}</version>
 		</dependency>
 	</dependencies>
-
-	<pluginRepositories>
-		<!-- Temporary measure until https://issues.apache.org/jira/browse/UIMA-3346 
-			is accepted into uimaFIT -->
-		<pluginRepository>
-			<id>uima-uimafit-mvn-repo</id>
-			<url>https://raw.github.com/argo-nactem/uima-uimafit/mvn-repo/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>
