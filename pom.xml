@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>argo-starter-components</artifactId>
-	<version>0.5</version>
+	<version>0.5.1</version>
 	<packaging>pom</packaging>
 
 	<name>Argo Starter Components</name>
@@ -201,7 +201,10 @@
 										def targetFile = new File(project.build.directory + '/pearPackaging/desc/' + descriptorPath);
 
 										targetFile.getParentFile().mkdirs();
-										targetFile &lt;&lt; sourceFile.text;
+										//targetFile &lt;&lt; sourceFile.text;
+										targetFile.newWriter().withWriter { 
+  											w -> w &lt;&lt; sourceFile.text
+										}
 
 										project.properties['uima.pear.descriptor'] = 'desc/' + descriptorPath;
 									</source>
